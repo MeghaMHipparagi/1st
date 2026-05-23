@@ -1,0 +1,27 @@
+# Visual Studio temporary files
+.vs
+.user
+.suo
+.userosscache
+.sln.docstates
+
+# Build results
+bin
+obj
+
+# Visual Studio Code workspace
+.vscode
+
+# Rider IDE
+.idea
+
+# NuGet packages
+.nupkg
+.snupkg
+
+# Logs
+.log
+
+# OS generated files
+Thumbs.db
+Desktop.ini
