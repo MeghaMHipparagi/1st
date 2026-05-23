@@ -1,0 +1,158 @@
+<div class="container my-4 animate-fade-in">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div>
+      <h2 class="fw-bold m-0 text-dark">Workspace Control Board</h2>
+      <small class="text-muted">Welcome back, <strong>{{ getUsername() }}</strong>. Managing network operations ledger.</small>
+    </div>
+    <div>
+      <span class="badge rounded-pill px-3 py-2 fs-6 border"
+            [ngClass]="isManager() ? 'bg-primary text-white border-primary' : 'bg-light text-dark border-secondary'">
+        <i class="fas" [ngClass]="isManager() ? 'fa-user-shield me-2' : 'fa-user me-2'"></i>
+        Active Session: {{ isManager() ? 'Campus Manager' : 'Student Employee' }}
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+    <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
+    <button type="button" class="btn-close" (click)="clearNotifications()"></button>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+    <button type="button" class="btn-close" (click)="clearNotifications()"></button>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4 mb-2">
+      <div class="card border-0 bg-light shadow-sm p-2 text-center rounded-3">
+        <h6 class="text-uppercase text-muted fw-bold small m-1">Pending Evaluation</h6>
+        <h3 class="fw-bold text-warning m-0">{{ pendingCount }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4 mb-2">
+      <div class="card border-0 bg-light shadow-sm p-2 text-center rounded-3">
+        <h6 class="text-uppercase text-muted fw-bold small m-1">Active Ecosystem Gigs</h6>
+        <h3 class="fw-bold text-success m-0">{{ approvedCount }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4 mb-2">
+      <div class="card border-0 bg-light shadow-sm p-2 text-center rounded-3">
+        <h6 class="text-uppercase text-muted fw-bold small m-1">Archived/Rejected Actions</h6>
+        <h3 class="fw-bold text-danger m-0">{{ rejectedCount }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isManager()" class="card shadow-sm border-0 rounded-4 p-4 mb-4 bg-white border-top border-primary border-4">
+    <h5 class="fw-bold mb-3 text-primary"><i class="fas fa-plus-circle me-2"></i>Publish New Freelance Gig Contract</h5>
+    <form (ngSubmit)="submitGigOrder()" #gigForm="ngForm">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Task Title Specification</label>
+          <input type="text" name="title" [(ngModel)]="title" class="form-control" placeholder="e.g., Build Angular Interface Mockup" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label fw-semibold">Ecosystem Domain Category</label>
+          <select name="category" [(ngModel)]="category" class="form-select">
+            <option value="0">Writing & Translation</option>
+            <option value="1">Graphic Design</option>
+            <option value="2">Photography</option>
+            <option value="3">Campus Tutoring</option>
+            <option value="4">Software Programming</option>
+            <option value="5">Academic Research</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label fw-semibold">Required Escrow Credit Budget</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light text-muted fw-bold">CC</span>
+            <input type="number" name="rewardCredits" [(ngModel)]="rewardCredits" class="form-control" min="1" placeholder="250" required>
+          </div>
+        </div>
+        <div class="col-12 mb-3">
+          <label class="form-label fw-semibold">Detailed Deliverable Scope Descriptions</label>
+          <textarea name="description" [(ngModel)]="description" class="form-control" rows="3" placeholder="Provide complete baseline instructions and verification patterns..." required></textarea>
+        </div>
+      </div>
+      <div class="text-end">
+        <button type="submit" [disabled]="!gigForm.form.valid" class="btn btn-primary px-4 fw-semibold shadow-sm">
+          <i class="fas fa-wallet me-2"></i>Lock Escrow & Publish Task
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+    <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+      <h5 class="m-0 fw-bold"><i class="fas fa-list-alt me-2"></i>Ecosystem Marketplace Registry Ledger</h5>
+      <button class="btn btn-sm btn-outline-light" (click)="loadDashboardRegistry()">
+        <i class="fas fa-sync-alt"></i> Force Refresh
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-dark" role="status">
+        <span class="visually-hidden">Syncing core registry logs...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && items.length === 0" class="text-center py-5 text-muted">
+      <i class="fas fa-folder-open fa-3x mb-3 text-black-50"></i>
+      <p class="fs-5 m-0">No active marketplace records match your query profile parameters.</p>
+    </div>
+
+    <div *ngIf="!loading && items.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-uppercase font-monospace small">
+          <tr>
+            <th class="ps-4">Contract ID</th>
+            <th>Gig Scope Title / Deliverables</th>
+            <th>Category</th>
+            <th class="text-end">Credit Reward</th>
+            <th class="text-center">Status Flag</th>
+            <th *ngIf="isManager()" class="text-center pe-4">System Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items" class="animate-fade-in">
+            <td class="ps-4 font-monospace text-muted fw-bold">#{{ item.id }}</td>
+            <td>
+              <div class="fw-bold text-dark">{{ item.title }}</div>
+              <small class="text-muted text-truncate d-inline-block" style="max-width: 350px;">{{ item.description }}</small>
+            </td>
+            <td>
+              <span class="badge bg-secondary text-white opacity-75">{{ getCategoryName(item.category) }}</span>
+            </td>
+            <td class="text-end fw-bold font-monospace text-primary">
+              {{ item.rewardCredits | number:'1.2-2' }} CC
+            </td>
+            <td class="text-center">
+              <span class="badge rounded-pill px-3 py-2 border"
+                    [ngClass]="{
+                      'bg-warning text-dark border-warning': item.status === 0,
+                      'bg-info text-white border-info': item.status === 2 || item.status === 3,
+                      'bg-success text-white border-success': item.status === 1 || item.status === 4,
+                      'bg-danger text-white border-danger': item.status === 5
+                    }">
+                {{ getStatusName(item.status) }}
+              </span>
+            </td>
+            <td *ngIf="isManager()" class="text-center pe-4">
+              <div *ngIf="item.status === 0; else lockedStateTemplate" class="d-flex justify-content-center gap-2">
+                <button (click)="approveGig(item.id)" class="btn btn-sm btn-success px-3 fw-semibold shadow-sm">
+                  <i class="fas fa-check me-1"></i>Approve
+                </button>
+                <button (click)="rejectGig(item.id)" class="btn btn-sm btn-danger px-3 fw-semibold shadow-sm">
+                  <i class="fas fa-times me-1"></i>Reject
+                </button>
+              </div>
+              <ng-template #lockedStateTemplate>
+                <span class="text-muted font-monospace small"><i class="fas fa-lock me-1"></i>Immutable State</span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
