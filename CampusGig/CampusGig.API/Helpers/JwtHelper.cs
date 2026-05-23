@@ -23,7 +23,8 @@ namespace CampusGig.API.Helpers
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Email, email)
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Role, "Employee")
             };
 
             var jwtKey = _config["JwtSettings:Secret"];

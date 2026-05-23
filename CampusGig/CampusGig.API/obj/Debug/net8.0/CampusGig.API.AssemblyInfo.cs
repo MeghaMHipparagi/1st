@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CampusGig.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45fac7e0d486f4241b4515cedacf75c768a0301a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88a64f87344475de833e73c656822e800328de47")]
 [assembly: System.Reflection.AssemblyProductAttribute("CampusGig.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CampusGig.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
